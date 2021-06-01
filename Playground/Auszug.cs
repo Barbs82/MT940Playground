@@ -52,27 +52,36 @@ namespace Playground
                 // account ID an XML geben
                 writer.WriteAttributeString("Kontonummer", accountID);
 
+                int creditCounter = 0;
+                int debitCounter = 0;
+                int transactionCounter = 0;
+
+                List<Transaction> credit = new List<Transaction>();
+
                 //Kontobewegungen werden an Transaktionsliste übergeben
                 for (int i = 0; i < count; i++)
                 {
                     transaction = customerStatementMessages[i];
                     transactions = (List<Transaction>)transaction.Transactions;
+                    
 
                     //Betrachtet jede Transaktion der Transaktionsliste
                     foreach (Transaction transact in transactions)
                     {
-                        
-                            //liest den Betrag mit Währung aus
-                            var transactionAmount = transact.Amount;
+                        transactionCounter++;
+                        //liest den Betrag mit Währung aus
+                        var transactionAmount = transact.Amount;
+
                         // prüft auf Debit(Abbuchung) oder Credit(Gutschrift)
                         var creditDebit = transact.DebitCredit;
-                        if(creditDebit.Equals(DebitCredit.Credit))
-                            
-                        { Console.WriteLine(creditDebit); }
-                        else { Console.WriteLine("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"); }
+
+                        if (creditDebit.Equals(DebitCredit.Credit))
+                        {
+                            Console.WriteLine(creditDebit);
+                            credit.Add(transact);
                             //liest den Verwendungszweck aus
                             var transactionRef = transact.Description;
-                       
+
                             //legt XML Element an
                             writer.WriteStartElement("Umsatz");
                             writer.WriteAttributeString("Currency", transactionAmount.Currency.Code);
@@ -86,9 +95,22 @@ namespace Playground
                             //schliesst XML Element
                             writer.WriteEndElement();
                             writer.WriteEndElement();
-                        
+
+                            creditCounter++;
+                        }
+                        else
+                        {
+                           // Console.WriteLine("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                            debitCounter++;
+                            continue;
+                        }
                     }
+                    
                 }
+                Console.WriteLine("******************************");
+                Console.WriteLine(credit[1].Amount);
+                Console.WriteLine("Gutschriften: " + creditCounter + "\n Abbuchungen: " + debitCounter);
+                Console.WriteLine(transactionCounter);
                 writer.WriteEndDocument();
                 writer.Close();
             }
