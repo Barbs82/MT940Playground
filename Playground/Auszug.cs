@@ -61,25 +61,32 @@ namespace Playground
                     //Betrachtet jede Transaktion der Transaktionsliste
                     foreach (Transaction transact in transactions)
                     {
-                        //liest den Betrag mit Währung aus
-                        var transactionAmount = transact.Amount;
+                        
+                            //liest den Betrag mit Währung aus
+                            var transactionAmount = transact.Amount;
+                        // prüft auf Debit(Abbuchung) oder Credit(Gutschrift)
+                        var creditDebit = transact.DebitCredit;
+                        if(creditDebit.Equals(DebitCredit.Credit))
+                            
+                        { Console.WriteLine(creditDebit); }
+                        else { Console.WriteLine("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"); }
+                            //liest den Verwendungszweck aus
+                            var transactionRef = transact.Description;
+                       
+                            //legt XML Element an
+                            writer.WriteStartElement("Umsatz");
+                            writer.WriteAttributeString("Currency", transactionAmount.Currency.Code);
+                            writer.WriteString(transactionAmount.ToString());
+                            writer.WriteStartElement("Verwendungszweck");
+                            writer.WriteString(transactionRef);
 
-                        //liest den Verwendungszweck aus
-                        var transactionRef = transact.Description;
+                            Console.WriteLine(transactionAmount);
+                            Console.WriteLine(transactionRef);
 
-                        //legt XML Element an
-                        writer.WriteStartElement("Umsatz");
-                        writer.WriteAttributeString("Currency", transactionAmount.Currency.Code);
-                        writer.WriteString(transactionAmount.ToString());
-                        writer.WriteStartElement("Verwendungszweck");
-                        writer.WriteString(transactionRef);
-
-                        Console.WriteLine(transactionAmount);
-                        Console.WriteLine(transactionRef);
-
-                        //schliesst XML Element
-                        writer.WriteEndElement();
-                        writer.WriteEndElement();
+                            //schliesst XML Element
+                            writer.WriteEndElement();
+                            writer.WriteEndElement();
+                        
                     }
                 }
                 writer.WriteEndDocument();
