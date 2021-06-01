@@ -41,20 +41,24 @@ namespace Playground
 
                 List<Transaction> transactions;
                 int count = customerStatementMessages.Count;
-                int accounId;
-
-                setting.ConformanceLevel = ConformanceLevel.Fragment;
-
-
-                writer.WriteStartElement("Kontobezeichnung");
                 
+                setting.ConformanceLevel = ConformanceLevel.Fragment;
+                
+                writer.WriteStartElement("Konto");
+                
+
+                Console.WriteLine("Kontonummer", customerStatementMessages[0].Account.ToString());
+                var transaction = customerStatementMessages[0];
+                var accountID = transaction.Account;
+                Console.WriteLine(accountID);
+                writer.WriteAttributeString("Kontonummer", accountID);
                 foreach (CustomerStatementMessage customerStatementMessage in customerStatementMessages)
                 {
                     
-                    var transaction = customerStatementMessage;
                     transactions = (List<Transaction>)transaction.Transactions;
                     
-                    foreach(Transaction transact in transactions)
+
+                    foreach (Transaction transact in transactions)
                     {
                         var transactionAmount = transact.Amount;
                         var transactionRef = transact.Description;
@@ -68,13 +72,11 @@ namespace Playground
                         Console.WriteLine(transactionRef);
                         writer.WriteEndElement();
                         writer.WriteEndElement();
-
                     }                
                 }
                 writer.WriteEndDocument();
                 writer.Close();
             }
-
         }
     }
 }
