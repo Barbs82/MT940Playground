@@ -9,15 +9,8 @@ namespace Playground
     {
         static void Main(string[] args)
         {
-            Auszug a = new Auszug();
-            
-            
-            a.readCustMsg();
-            
+            Auszug a = new Auszug();           
+            a.readCustMsg();       
         }
-        // Zeilenweise Auslesen, solange  verbleibende Zeilenanzahl > 0
-
-
-    }
-    
+    }  
 }

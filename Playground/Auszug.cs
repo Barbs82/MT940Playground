@@ -32,47 +32,55 @@ namespace Playground
 
                 //XML anlegen
                 XmlWriterSettings setting = new XmlWriterSettings();
-
                 setting.Indent = true;
                 setting.IndentChars = "  ";
-                
+                setting.ConformanceLevel = ConformanceLevel.Fragment;
+
                 XmlWriter writer = XmlWriter.Create(@"U:\Projekte\Test.xml");
                 writer.WriteStartDocument();
+                writer.WriteStartElement("Konto");
 
+                //Legt Liste mit Transaktionen(Kontobewegungen) an
                 List<Transaction> transactions;
                 int count = customerStatementMessages.Count;
-                
-                setting.ConformanceLevel = ConformanceLevel.Fragment;
-                
-                writer.WriteStartElement("Konto");
-                
 
-                Console.WriteLine("Kontonummer", customerStatementMessages[0].Account.ToString());
+                // Kontonummer für des Auszugs ermitteln
                 var transaction = customerStatementMessages[0];
                 var accountID = transaction.Account;
                 Console.WriteLine(accountID);
-                writer.WriteAttributeString("Kontonummer", accountID);
-                foreach (CustomerStatementMessage customerStatementMessage in customerStatementMessages)
-                {
-                    
-                    transactions = (List<Transaction>)transaction.Transactions;
-                    
 
+                // account ID an XML geben
+                writer.WriteAttributeString("Kontonummer", accountID);
+
+                //Kontobewegungen werden an Transaktionsliste übergeben
+                for (int i = 0; i < count; i++)
+                {
+                    transaction = customerStatementMessages[i];
+                    transactions = (List<Transaction>)transaction.Transactions;
+
+                    //Betrachtet jede Transaktion der Transaktionsliste
                     foreach (Transaction transact in transactions)
                     {
+                        //liest den Betrag mit Währung aus
                         var transactionAmount = transact.Amount;
+
+                        //liest den Verwendungszweck aus
                         var transactionRef = transact.Description;
+
+                        //legt XML Element an
                         writer.WriteStartElement("Umsatz");
                         writer.WriteAttributeString("Currency", transactionAmount.Currency.Code);
                         writer.WriteString(transactionAmount.ToString());
                         writer.WriteStartElement("Verwendungszweck");
                         writer.WriteString(transactionRef);
-               
+
                         Console.WriteLine(transactionAmount);
                         Console.WriteLine(transactionRef);
+
+                        //schliesst XML Element
                         writer.WriteEndElement();
                         writer.WriteEndElement();
-                    }                
+                    }
                 }
                 writer.WriteEndDocument();
                 writer.Close();
